@@ -1,5 +1,5 @@
 import sys
-sys.path.append('../')
+sys.path.append('../lib')
 
 import advent_of_code
 
