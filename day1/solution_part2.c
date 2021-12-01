@@ -3,17 +3,17 @@
 
 void main(){
     FILE *fp;
-    int counter = 0;
-    int i = 0;
-    int list[5000];
+    int counter, curr = 0;
+    int list[2000];
     fp = fopen("input.txt","r");
-    fscanf(fp,"%d",&i);
+    fscanf(fp,"%d",&curr);
     while (!feof (fp))
     {
-        fscanf (fp, "%d", &i);   
-        list[counter] = i;
+        fscanf (fp, "%d", &curr);   
+        list[counter] = curr;
         counter++;
     }
+    
     int higher = 0;
     int prev = INT_MAX;
     for (int j= 0;j<counter-2;j++){

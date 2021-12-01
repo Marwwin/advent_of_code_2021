@@ -1,20 +1,18 @@
 #include <stdio.h>
+#include <limits.h>
 
 void main(){
     FILE *fp;
-    int counter = 0;
-    int i = 0;
-    int prev = 0;
+    int counter, curr = 0; 
+    int prev = INT_MAX;
     fp = fopen("input.txt","r");
-    fscanf(fp,"%d",&i);
-    prev = i;
     while (!feof (fp))
     {
-        fscanf (fp, "%d", &i);   
-        if (i > prev ){
+        fscanf (fp, "%d", &curr);   
+        if (curr > prev ){
             counter += 1;
         }   
-        prev = i;
+        prev = curr;
 
     }
     printf("%d\n",counter);
