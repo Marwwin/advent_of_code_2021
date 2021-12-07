@@ -6,43 +6,34 @@ import advent_of_code
 
 input_list = advent_of_code.open_file("day7.txt")
 
-def create_crabs_list(input_list):
-    crabs = parse_crabs(input_list)
-    crabs_list = {x:0 for x in range(0,max(crabs)+1)}
-    for crab in crabs:
-        crabs_list[crab] += 1
-    return crabs_list
+def create_crabs(input_list):
+    parsed_list = parse_crabs(input_list)
+    crabs = {x:0 for x in range(0,max(parsed_list)+1)}
+    for num in parsed_list:
+        crabs[num] += 1
+    return crabs
 
 def parse_crabs(input_list):
     crabs = [int(n) for n in input_list[0].split(",")]
     return crabs
 
-def find_optimal_position_part1(crabs_list):
-    max_value = max(crabs_list.keys())
-    optimal_solution = 1000000
-    for x in range(max_value+1):
+def find_optimal_position(crabs,constant_burn=True):
+    max_value = max(crabs.keys())
+    optimal_solution = None
+    for pos in range(max_value+1):
         solution = 0
-        for crab_i in crabs_list.keys():
-            solution += crabs_list[crab_i] * abs(int(x)-int(crab_i))
-        if solution < optimal_solution:
+        for crab_pos in crabs.keys():
+            if constant_burn:
+                solution += crabs[crab_pos] * abs(pos-crab_pos)
+            else:
+                solution += crabs[crab_pos] * sum(range(1,abs(pos-crab_pos)+1))
+        if not optimal_solution or solution < optimal_solution:
             optimal_solution = solution
-
     return optimal_solution
 
-def find_optimal_position_part2(crabs_list):
-    max_value = max(crabs_list.keys())
-    optimal_solution = 10000000000
-    for x in range(max_value+1):
-        solution = 0
-        for crab_i in crabs_list.keys():
-            solution += crabs_list[crab_i] * sum(range(1,abs(int(x)-int(crab_i))+1))
-        if solution < optimal_solution:
-            optimal_solution = solution
+crabs = create_crabs(input_list)    
+print(find_optimal_position(crabs,True))
+print(find_optimal_position(crabs,False))
 
-    return optimal_solution
-
-crabs_list = create_crabs_list(input_list)    
-find_optimal_position_part1(crabs_list)
-find_optimal_position_part2(crabs_list)
 
 
