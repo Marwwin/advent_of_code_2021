@@ -6,19 +6,26 @@ import advent_of_code
 import numpy as np
 import functools
 
-input_list = advent_of_code.open_file("/home/makankko/Documents/advent_of_code_2021/day9/day9.txt")
+input_list = advent_of_code.open_file("/home/marwwin/Documents/Personal/advent_of_code/day9/day9.txt")
 
 input_list = [[int(n) for n in x.strip()] for x in input_list]
 
 np_list = np.array(input_list)
 
 def solve_part1(matrix):
-  result = 0
+  basins = []
+  height = 0
   for i,line in enumerate(matrix):
     for j,num in enumerate(line):
       if is_low_point(matrix,(i,j)):
-        result += 1+num
-  return result
+        height += 1+num
+        bas = find_basin(matrix,(i,j),[])
+        basins.append(len(set(bas)))
+  
+  print(height)
+  print(functools.reduce(lambda a,b: a*b,sorted(basins)[-3:]))
+  
+  return height
 
 def find_neighbours(matrix,pos):
   neigbours = {"u":None,"d":None,"l":None,"r":None}
@@ -40,16 +47,6 @@ def is_low_point(matrix,pos):
 def matrix_at(matrix,pos):
   return matrix[pos[0]][pos[1]]
 
-def solve_part2(matrix):
-  basins = []
-  for i,line in enumerate(matrix):
-    for j,num in enumerate(line):
-      if is_low_point(matrix,(i,j)):
-        bas = find_basin(matrix,(i,j),[])
-        basins.append(len(set(bas)))
-        
-  return sorted(basins)
-
 def find_basin(matrix,pos,res):
   res.append(pos)
   neighbours = find_neighbours(matrix,pos)
@@ -65,9 +62,8 @@ def find_basin(matrix,pos,res):
       res = find_basin(matrix,(pos[0]-1,pos[1]),res)
   return res
 
-#bas = find_basin(np_list,(2,2))
-#print(bas)
-#print(len(set(bas)))
-bas = solve_part2(np_list)
-print(functools.reduce(lambda a,b: a*b,bas[-3:]))
+solve_part1(np_list)
 
+
+
+# %%
