@@ -10,15 +10,22 @@ class PriorityQueue:
 			self.heap = queue
 
 	def is_empty(self) -> bool:
-		return True if self.heap == [] else False
+		return True if len(self.heap.keys()) == 0 else False
 
-	def insert(self, element: Tuple[int, int]) -> None:
-		if not element in self.heap:
-			self.heap.append(element)
+	def insert(self, element: Tuple[int, int],x,y,value) -> None:
+		node = self.create_node(element,x,y)
+		if not node in self.heap.keys() or value < self.heap[node] :
+			self.heap.append({node:value}) 
 			self.heapify_up()
 
+	def create_node(self,coordinates,offset_x,offset_y):
+		x = coordinates[0] + offset_x
+		y = coordinates[1] + offset_y
+		return (x,y)
+
 	def pop(self) -> Tuple[int, int]:
-		if not self.is_empty():
+
+		if not self.is_empty() :
 			item = self.heap[0]
 			self.heap[0] = self.heap[len(self.heap)-1]
 			self.heap = self.heap[:-1]
@@ -83,19 +90,19 @@ class PriorityQueue:
 def solve() -> None:
 	matrix = open_file("test_day15.txt")
 	queue = PriorityQueue()
-	paths = []
-	current_node = (matrix[0][0],(0,0))
+	paths = {}
+	current_node = ((0,0),matrix[0][0])
 	queue = add_possible_nodes(current_node,queue,paths,matrix)
 	end = (len(matrix)-1,len(matrix[0])-1)
-	while current_node[1] != end:
+	while current_node[0] != end:
 		current_node, paths, queue = step(queue,paths,current_node,matrix)
-	print(paths)
+	print(paths) != end
 
 def step(queue,paths,current_node,matrix):
 	new_node = queue.pop()
 	if new_node == False:
 		print(paths)
-	paths.append(current_node)
+	paths[current_node[0]] = current_node[1] 	
 	current_node = new_node
 	#print(current_node)
 	queue = add_possible_nodes(current_node,queue,paths,matrix)
@@ -103,24 +110,23 @@ def step(queue,paths,current_node,matrix):
 
 
 def add_possible_nodes(current_node,queue,paths,matrix):
-	current_value = matrix_value(current_node[1],matrix)
-	if current_node[1][0] != 0:
-		new_node = (current_node[1][0]-1,current_node[1][1])
-		if new_node not in [path[1] for path in paths]:
-			queue.insert((current_value+matrix_value(new_node,matrix),new_node))
-	if current_node[1][0] != len(matrix)-1:
-		new_node = (current_node[1][0]+1,current_node[1][1])
-		if new_node not in [path[1] for path in paths]:
-			queue.insert((current_value+matrix_value(new_node,matrix),new_node))
-	if current_node[1][1] != 0:
-		new_node = (current_node[1][0],current_node[1][1]-1)
-		if new_node not in [path[1] for path in paths]:
-			queue.insert((current_value+matrix_value(new_node,matrix),new_node))
-	if current_node[1][1] != len(matrix[0])-1:
-		new_node = (current_node[1][0],current_node[1][1]+1)
-		if new_node not in [path[1] for path in paths]:
-			queue.insert((current_value+matrix_value(new_node,matrix),new_node))		
-	return queue
+	print(current_node)
+
+	current_value = (current_node[0],matrix_value(current_node[0],matrix)
+	if current_node[0][0] != 0:
+		queue.insert(current_node[0],x=-1, y= 0, value=current_node[1])
+	if current_node[0][0] != len(matrix)-1:
+		new_node = (current_node[0][0]+1,current_node[0][1])
+		queue.insert((current_value+matrix_value(new_node,matrix),new_node))
+	if current_node[0][1] != 0:
+		new_node = (current_node[0][0],current_node[0][1]-1)
+		queue.insert((current_value+matrix_value(new_node,matrix),new_node))
+	if current_node[0][1] != len(matrix[0])-1:
+		new_node = (current_node[0][0],current_node[0][1]+1)
+		queue.insert((current_value+matrix_value(new_node,matrix),new_node))		
+	return queuecurrent_node[0]
+	
+
 
 def matrix_value(node,matrix):
 		return matrix[node[0]][node[1]]
