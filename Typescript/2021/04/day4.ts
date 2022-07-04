@@ -1,12 +1,17 @@
+import { Matrix } from "../utils/utils";
+
 export class Bingo {
   #boards: Board[];
   #drawnNumbers: number[];
   #currentNumberIndex: number;
+  #boardsWon:number;
   constructor(inputData: string[]) {
     this.#drawnNumbers = inputData[0].split(",").map((e) => parseInt(e));
     this.#boards = this.parseBoards(inputData);
     this.#currentNumberIndex = 0;
+    this.#boardsWon = 0;
   }
+
   parseBoards(inputData: string[]) {
     const rawData = inputData.slice(2);
     const boards: Board[] = [];
@@ -27,16 +32,27 @@ export class Bingo {
     return boards;
   }
 
-  play(): number {
+  play(): { win: boolean; result: number } {
     const currentNumber = this.#drawnNumbers[this.#currentNumberIndex++];
+    const won = []
     for (const board of this.#boards) {
-      board.checkNumber(currentNumber);
+      const isWin = board.checkNumber(currentNumber);
+      if (typeof isWin === "number") {
+        this.#boardsWon++;
+        won.push(isWin);
+      }
     }
-    return currentNumber;
+    if (won.length > 0){ 
+        console.log(won)
+        return { win: true, result: won[0] };}
+    return { win: false, result: currentNumber };
   }
 
   currentNumber() {
     return this.#drawnNumbers[this.#currentNumberIndex];
+  }
+  currentNumberI() {
+    return this.#currentNumberIndex
   }
 
   get drawnNumbers() {
@@ -44,6 +60,9 @@ export class Bingo {
   }
   get boards() {
     return this.#boards;
+  }
+  get boardsWon(){
+    return this.#boardsWon;
   }
 }
 
@@ -57,10 +76,28 @@ export class Board {
     this.#hits = [];
   }
 
-  checkNumber(n: number) {
+  checkNumber(n: number): boolean | number {
     if (this.#numbers.some((e) => e === n)) {
       this.#hits.push(n);
     }
+    if (this.isWin()) {
+      return this.getSumOfNonHits() * n;
+    }
+    return false;
+  }
+
+  private isWin() {
+    return (
+      Matrix.isRow(this.#hits, this.#board) ||
+      Matrix.isColumn(this.#hits, this.#board) 
+      //Matrix.isDiagonal(this.#hits, this.#board)
+    );
+  }
+
+  getSumOfNonHits(): number {
+    return this.#numbers
+      .filter((n) => !this.#hits.includes(n))
+      .reduce((tot, num) => tot + num);
   }
 
   get numbers(): number[] {
