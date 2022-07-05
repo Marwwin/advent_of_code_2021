@@ -32,21 +32,16 @@ export class Bingo {
     return boards;
   }
 
-  play(): { win: boolean; result: number } {
+  play() {
     const currentNumber = this.#drawnNumbers[this.#currentNumberIndex++];
-    const won = []
-    for (const board of this.#boards) {
-      const isWin = board.checkNumber(currentNumber);
-      if (typeof isWin === "number") {
-        this.#boardsWon++;
-        won.push(isWin);
-      }
+    const boardsLeft = this.#boards.filter(board => !board.won)
+    for (const board of boardsLeft) {
+      board.checkNumber(currentNumber);
     }
-    if (won.length > 0){ 
-        console.log(won)
-        return { win: true, result: won[0] };}
-    return { win: false, result: currentNumber };
+    return boardsLeft.filter(board => board.won)
   }
+
+
 
   currentNumber() {
     return this.#drawnNumbers[this.#currentNumberIndex];
@@ -70,20 +65,25 @@ export class Board {
   #numbers: number[];
   #board: number[][];
   #hits: number[];
+  #won:boolean;
   constructor(listOfNumbers: number[][]) {
     this.#board = listOfNumbers;
     this.#numbers = listOfNumbers.flat(2);
     this.#hits = [];
+    this.#won = false;
   }
 
-  checkNumber(n: number): boolean | number {
+  checkNumber(n: number) {
     if (this.#numbers.some((e) => e === n)) {
       this.#hits.push(n);
     }
     if (this.isWin()) {
-      return this.getSumOfNonHits() * n;
+      this.#won = true;
     }
-    return false;
+  }
+
+  winningScore(){
+    return this.getSumOfNonHits() * this.#hits[this.#hits.length -1 ];
   }
 
   private isWin() {
@@ -100,6 +100,9 @@ export class Board {
       .reduce((tot, num) => tot + num);
   }
 
+  get won():boolean{
+    return this.#won;
+  }
   get numbers(): number[] {
     return this.#numbers;
   }

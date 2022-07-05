@@ -27,8 +27,8 @@ describe("day4", () => {
   test("When the game progresses a new number should be drawn, If number on board it should be saved to board", () => {
     const inputText = util.getInput("2021", "04", "test_data.txt");
     const bingo = new Bingo(inputText);
-    expect(bingo.play()).toStrictEqual({win:false,result:7});
-    expect(bingo.play()).toStrictEqual({win:false,result:4});
+    expect(bingo.play()).toStrictEqual({ win: false, result: 7 });
+    expect(bingo.play()).toStrictEqual({ win: false, result: 4 });
   });
   const boardData = [
     [3, 15, 0, 2, 22],
@@ -73,31 +73,29 @@ describe("day4", () => {
   test("Play the game with test_data until one board wins", () => {
     const inputText = util.getInput("2021", "04", "test_data.txt");
     const bingo = new Bingo(inputText);
-    let win = bingo.play();  
-    while (!win.win) {
-      win = bingo.play();
+    let winningBoards: Board[] = [];
+    while (winningBoards.length === 0) {
+      winningBoards = bingo.play();
     }
-    expect(win.result).toBe(4512);
+    expect(winningBoards[0].winningScore()).toBe(4512);
   });
   test("Play the game until one board wins", () => {
     const inputText = util.getInput("2021", "04");
     const bingo = new Bingo(inputText);
-    let win = bingo.play();  
-    while (!win.win) {
-      win = bingo.play();
+    let winningBoards: Board[] = [];
+
+    while (winningBoards.length === 0) {
+      winningBoards = bingo.play();
     }
-    expect(win.result).toBe(63552);
+    expect(winningBoards[0].winningScore()).toBe(63552);
   });
   test("Play the game until the last board wins", () => {
     const inputText = util.getInput("2021", "04");
     const bingo = new Bingo(inputText);
-    let win = bingo.play();  
-    while (bingo.boardsWon < bingo.boards.length ) {
-        console.log(bingo.boardsWon, bingo.boards.length, bingo.currentNumberI());
-      win = bingo.play();
+    let winningBoards: Board[] = [];
+    while (bingo.boards.filter((board: Board) => !board.won).length > 0) {
+      winningBoards = bingo.play();
     }
-    win = bingo.play();
-
-    expect(win.result).toBe(9020);
+    expect(winningBoards[0].winningScore()).toBe(9020);
   });
 });
